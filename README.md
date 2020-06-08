@@ -7,7 +7,7 @@ To use workflow, just copy the content of your required workflow file, modify it
 
 ### Workflows
 
-1. [Continuous Delivery](https://github.com/iam-mhaseeb/GithubActionsWorkflows/blob/master/Continuous%20Delivery/continuous_delivery_workflow.yml)
+1. [Continuous Delivery (Self Hosted)](https://github.com/iam-mhaseeb/GithubActionsWorkflows/blob/master/Continuous%20Delivery/continuous_delivery_self_hosted_workflow.yml)
 
 ## Contributing
 
