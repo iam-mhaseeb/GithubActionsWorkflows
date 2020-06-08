@@ -1,0 +1,46 @@
+name: Continous Devlivery
+# This workflow is triggered on push to master branch.
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    # Job name is Continuous Delivery
+    name: Continous Devlivery
+    # This job runs on our server
+    runs-on: self-hosted
+    steps:
+      - name: deploy
+        run: |
+          cd ~/backend
+          eval `ssh-agent -s`
+          ssh-add ~/.ssh/github_key
+          git pull deploy master
+          source ve/bin/activate
+          pip install -r requirements.txt
+          python manage.py makemigrations
+          python manage.py migrate
+          sudo systemctl daemon-reload
+          sudo systemctl restart uwsgi
+          sudo nginx -t && sudo systemctl restart nginx
+      - name: Notify slack success
+        if: success()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: alerts
+          status: SUCCESS
+          color: good
+
+      - name: Notify slack fail
+        if: failure()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: alerts
+          status: FAILED
+          color: danger
